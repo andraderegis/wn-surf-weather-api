@@ -9,6 +9,12 @@ import {
 import { ClientRequestError } from '@src/clients/errors/client-request-error';
 import { StormGlassResponseError } from '@src/clients/errors/storm-glass-response-error';
 
+import config, { IConfig } from 'config';
+
+const stormGlassResourceConfig: IConfig = config.get(
+  'App.resources.StormGlass'
+);
+
 export class StormGlass {
   readonly stormGlassAPIParams =
     'swellDirection,swellHeight,swellPeriod,waveDirection,waveHeight,windDirection,windSpeed';
@@ -27,10 +33,12 @@ export class StormGlass {
       const response = await this.requestHandler.get<
         IStormGlassForecastResponse
       >(
-        `https://api.stormglass.io/v2/weather/point?lat=${lat}&lng=${lng}&params=${apiParams}&source=${apiSource}`,
+        `${stormGlassResourceConfig.get(
+          'apiUrl'
+        )}/weather/point?lat=${lat}&lng=${lng}&params=${apiParams}&source=${apiSource}`,
         {
           headers: {
-            Authorization: 'fake-token'
+            Authorization: `${stormGlassResourceConfig.get('apiToken')}`
           }
         }
       );
