@@ -3,10 +3,11 @@ import axios from 'axios';
 import {
   IForecastPoint,
   IStormGlassForecastResponse,
-  IStormGlassPoint,
+  IStormGlassPoint
 } from '@src/clients/interfaces/storm-glass-interfaces';
 
-import { ClientRequestError } from './errors/client-request-error';
+import { ClientRequestError } from '@src/clients/errors/client-request-error';
+import { StormGlassResponseError } from '@src/clients/errors/storm-glass-response-error';
 
 export class StormGlass {
   readonly stormGlassAPIParams =
@@ -29,13 +30,20 @@ export class StormGlass {
         `https://api.stormglass.io/v2/weather/point?lat=${lat}&lng=${lng}&params=${apiParams}&source=${apiSource}`,
         {
           headers: {
-            Authorization: 'fake-token',
-          },
+            Authorization: 'fake-token'
+          }
         }
       );
 
       return this.normalizeResponse(response.data);
     } catch (err) {
+      if (err.response && err.response.status) {
+        throw new StormGlassResponseError(
+          `Error: ${JSON.stringify(err.response.data)}. Code: ${
+            err.response.status
+          }`
+        );
+      }
       throw new ClientRequestError(err.message);
     }
   }
@@ -52,7 +60,7 @@ export class StormGlass {
         swellHeight: point.swellHeight[this.stormGlassAPISource],
         swellPeriod: point.swellPeriod[this.stormGlassAPISource],
         windDirection: point.windDirection[this.stormGlassAPISource],
-        windSpeed: point.windSpeed[this.stormGlassAPISource],
+        windSpeed: point.windSpeed[this.stormGlassAPISource]
       };
     });
   }
