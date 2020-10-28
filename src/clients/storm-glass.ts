@@ -6,6 +6,8 @@ import {
   IStormGlassPoint
 } from '@src/clients/interfaces/storm-glass-interfaces';
 
+import * as HttpUtis from '@src/util/http-request';
+
 import { ClientRequestError } from '@src/clients/errors/client-request-error';
 import { StormGlassResponseError } from '@src/clients/errors/storm-glass-response-error';
 
@@ -21,7 +23,7 @@ export class StormGlass {
 
   readonly stormGlassAPISource = 'noaa';
 
-  constructor(protected requestHandler = axios) {}
+  constructor(protected requestHandler = new HttpUtis.HttpRequest()) {}
 
   public async fetchPoints(
     lat: number,
@@ -45,7 +47,7 @@ export class StormGlass {
 
       return this.normalizeResponse(response.data);
     } catch (err) {
-      if (err.response && err.response.status) {
+      if (HttpUtis.HttpRequest.isRequestError(err)) {
         throw new StormGlassResponseError(
           `Error: ${JSON.stringify(err.response.data)}. Code: ${
             err.response.status
