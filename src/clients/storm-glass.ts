@@ -1,9 +1,9 @@
 import axios from 'axios';
 
 import {
-  IForecastPoint,
-  IStormGlassForecastResponse,
-  IStormGlassPoint
+  ForecastPoint,
+  StormGlassForecastResponse,
+  StormGlassPoint
 } from '@src/clients/interfaces/storm-glass-interfaces';
 
 import * as HttpUtis from '@src/util/http-request';
@@ -30,10 +30,10 @@ export class StormGlass {
     lng: number,
     apiParams = this.stormGlassAPIParams,
     apiSource = this.stormGlassAPISource
-  ): Promise<IForecastPoint[]> {
+  ): Promise<ForecastPoint[]> {
     try {
       const response = await this.requestHandler.get<
-        IStormGlassForecastResponse
+        StormGlassForecastResponse
       >(
         `${stormGlassResourceConfig.get(
           'apiUrl'
@@ -59,8 +59,8 @@ export class StormGlass {
   }
 
   private normalizeResponse(
-    points: IStormGlassForecastResponse
-  ): IForecastPoint[] {
+    points: StormGlassForecastResponse
+  ): ForecastPoint[] {
     return points.hours.filter(this.isValidPoint.bind(this)).map((point) => {
       return {
         time: point.time,
@@ -75,7 +75,7 @@ export class StormGlass {
     });
   }
 
-  private isValidPoint(point: Partial<IStormGlassPoint>): boolean {
+  private isValidPoint(point: Partial<StormGlassPoint>): boolean {
     return !!(
       point.time &&
       point.swellDirection?.[this.stormGlassAPISource] &&
