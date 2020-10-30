@@ -1,7 +1,8 @@
 import { StormGlass } from '@src/clients/storm-glass';
 import {
   Beach,
-  BeachForecast
+  BeachForecast,
+  TimeForecast
 } from '@src/services/interfaces/forecast-interfaces';
 
 export class Forecast {
@@ -9,7 +10,7 @@ export class Forecast {
 
   public async processForecastForBeaches(
     beaches: Beach[]
-  ): Promise<BeachForecast[]> {
+  ): Promise<TimeForecast[]> {
     const pointsWithCorrectSources: BeachForecast[] = [];
 
     for (const beach of beaches) {
@@ -32,6 +33,27 @@ export class Forecast {
       pointsWithCorrectSources.push(...completeBeachData);
     }
 
-    return pointsWithCorrectSources;
+    return this.mapForecastByTime(pointsWithCorrectSources);
+  }
+
+  private mapForecastByTime(forecast: BeachForecast[]): TimeForecast[] {
+    const forecastByTime: TimeForecast[] = [];
+
+    for (const point of forecast) {
+      const timePoint = forecastByTime.find(
+        (forecastPoint) => forecastPoint.time === point.time
+      );
+
+      if (timePoint) {
+        timePoint.forecast.push(point);
+      } else {
+        forecastByTime.push({
+          time: point.time,
+          forecast: [point]
+        });
+      }
+    }
+
+    return forecastByTime;
   }
 }
