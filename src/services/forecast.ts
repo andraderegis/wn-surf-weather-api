@@ -1,9 +1,11 @@
+import { ForecastPoint } from '@src/clients/interfaces/storm-glass-interfaces';
 import { StormGlass } from '@src/clients/storm-glass';
 import {
   Beach,
   BeachForecast,
   TimeForecast
 } from '@src/services/interfaces/forecast-interfaces';
+import { ForecastProcessingInternalError } from './errors/forecast-processing-internal-error';
 
 export class Forecast {
   constructor(protected stormGlassClient = new StormGlass()) {}
@@ -13,27 +15,38 @@ export class Forecast {
   ): Promise<TimeForecast[]> {
     const pointsWithCorrectSources: BeachForecast[] = [];
 
-    for (const beach of beaches) {
-      const points = await this.stormGlassClient.fetchPoints(
-        beach.lat,
-        beach.lng
-      );
+    try {
+      for (const beach of beaches) {
+        const points = await this.stormGlassClient.fetchPoints(
+          beach.lat,
+          beach.lng
+        );
 
-      const completeBeachData = points.map((point) => {
-        return {
-          lat: beach.lat,
-          lng: beach.lng,
-          name: beach.name,
-          position: beach.position,
-          rating: 1,
-          ...point
-        };
-      });
+        const completeBeachData = await this.completeBeachData(points, beach);
 
-      pointsWithCorrectSources.push(...completeBeachData);
+        pointsWithCorrectSources.push(...completeBeachData);
+      }
+
+      return this.mapForecastByTime(pointsWithCorrectSources);
+    } catch (e) {
+      throw new ForecastProcessingInternalError(e.message);
     }
+  }
 
-    return this.mapForecastByTime(pointsWithCorrectSources);
+  private async completeBeachData(
+    points: ForecastPoint[],
+    beach: Beach
+  ): Promise<BeachForecast[]> {
+    return points.map((point) => {
+      return {
+        lat: beach.lat,
+        lng: beach.lng,
+        name: beach.name,
+        position: beach.position,
+        rating: 1,
+        ...point
+      };
+    });
   }
 
   private mapForecastByTime(forecast: BeachForecast[]): TimeForecast[] {
