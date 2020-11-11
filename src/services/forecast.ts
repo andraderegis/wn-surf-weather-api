@@ -1,10 +1,10 @@
 import { ForecastPoint } from '@src/clients/interfaces/storm-glass-interfaces';
 import { StormGlass } from '@src/clients/storm-glass';
 import {
-  Beach,
   BeachForecast,
   TimeForecast
 } from '@src/services/interfaces/forecast-interfaces';
+import { Beach } from '@src/models/beach';
 import { ForecastProcessingInternalError } from './errors/forecast-processing-internal-error';
 
 export class Forecast {
