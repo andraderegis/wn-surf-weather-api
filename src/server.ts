@@ -6,6 +6,7 @@ import './util/module-alias';
 import { BeachesController } from '@src/controllers/beaches';
 import { ForecastController } from '@src/controllers/forecast';
 import * as database from '@src/database';
+import { UsersController } from '@src/controllers/users';
 
 export class SetupServer extends Server {
   constructor(private port = 3000) {
@@ -37,8 +38,13 @@ export class SetupServer extends Server {
   private setupControllers(): void {
     const beachesController = new BeachesController();
     const forecastController = new ForecastController();
+    const usersController = new UsersController();
 
-    this.addControllers([beachesController, forecastController]);
+    this.addControllers([
+      beachesController,
+      forecastController,
+      usersController
+    ]);
   }
 
   public start(): void {
