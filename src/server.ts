@@ -2,7 +2,7 @@ import { Application } from 'express';
 import { Server } from '@overnightjs/core';
 import bodyParser from 'body-parser';
 
-import '@src/util/module-alias';
+import './util/module-alias';
 import { BeachesController } from '@src/controllers/beaches';
 import { ForecastController } from '@src/controllers/forecast';
 import * as database from '@src/database';
@@ -39,5 +39,11 @@ export class SetupServer extends Server {
     const forecastController = new ForecastController();
 
     this.addControllers([beachesController, forecastController]);
+  }
+
+  public start(): void {
+    this.app.listen(this.port, () => {
+      console.info('Server listening on port: ', this.port);
+    });
   }
 }
