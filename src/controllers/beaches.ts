@@ -16,6 +16,5 @@ export class BeachesController {
         ? res.status(422).send({ error: e.message })
         : res.status(500).send({ error: 'Internal Server Error' });
     }
-    // res.status(201).send({ id: 'id', ...req.body });
   }
 }
