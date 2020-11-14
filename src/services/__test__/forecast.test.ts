@@ -18,8 +18,8 @@ describe('Forecast Service', () => {
         lat: -33.792726,
         lng: 151.289824,
         name: 'Manly',
-        position: BeachPosition.E
-        // user: 'some-id'
+        position: BeachPosition.E,
+        user: 'some-id'
       }
     ];
 
@@ -107,8 +107,8 @@ describe('Forecast Service', () => {
         lat: -33.792726,
         lng: 151.289824,
         name: 'Manly',
-        position: BeachPosition.E
-        // user: 'some-id'
+        position: BeachPosition.E,
+        user: 'some-id'
       }
     ];
 
