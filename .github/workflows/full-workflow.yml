@@ -2,7 +2,6 @@ name: Complet Workflow
 on:
   push:
     branches:
-      - develop
       - master
 jobs:
   build:
@@ -40,6 +39,6 @@ jobs:
 
       - name: Deployment
         if: github.ref == 'refs/heads/master'
-        run: git remote add umbler https://geonosis.deploy.umbler.com/jg2y8ylk/regis-surf-forecast-com.git && git checkout -b master && git push umbler master
+        run: git remote add umbler ssh://git@geonosis.deploy.umbler.com:9922/jg2y8ylk/regis-surf-forecast-com.git && git push umbler master
         env:
           CI: true
