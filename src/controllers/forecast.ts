@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import { Forecast } from '@src/services/forecast';
 import { Beach } from '@src/models/beach';
 import { authMiddleware } from '@src/middleware/auth';
+import logger from '@src/logger';
 
 @Controller('forecast')
 @ClassMiddleware(authMiddleware)
@@ -22,6 +23,8 @@ export class ForecastController {
 
       res.status(200).send(forecastData);
     } catch (e) {
+      logger.error(e);
+
       res.status(500).send({ error: 'Something went wrong' });
     }
   }
