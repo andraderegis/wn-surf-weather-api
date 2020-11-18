@@ -1,6 +1,4 @@
 import config from 'config';
-import { SIGQUIT } from 'constants';
-import { promises } from 'fs';
 import logger from './logger';
 import { SetupServer } from './server';
 
