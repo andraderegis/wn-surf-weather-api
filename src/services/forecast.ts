@@ -6,10 +6,14 @@ import {
 } from '@src/services/interfaces/forecast-interfaces';
 import { Beach } from '@src/models/beach';
 import { ForecastProcessingInternalError } from './errors/forecast-processing-internal-error';
+import { Rating } from '@src/services/rating';
 import logger from '@src/logger';
 
 export class Forecast {
-  constructor(protected stormGlassClient = new StormGlass()) {}
+  constructor(
+    protected stormGlassClient = new StormGlass(),
+    protected RatingService: typeof Rating = Rating
+  ) {}
 
   public async processForecastForBeaches(
     beaches: Beach[]
@@ -20,12 +24,17 @@ export class Forecast {
 
     try {
       for (const beach of beaches) {
+        const rating = new this.RatingService(beach);
         const points = await this.stormGlassClient.fetchPoints(
           beach.lat,
           beach.lng
         );
 
-        const completeBeachData = await this.completeBeachData(points, beach);
+        const completeBeachData = await this.completeBeachData(
+          points,
+          beach,
+          rating
+        );
 
         pointsWithCorrectSources.push(...completeBeachData);
       }
@@ -40,7 +49,8 @@ export class Forecast {
 
   private async completeBeachData(
     points: ForecastPoint[],
-    beach: Beach
+    beach: Beach,
+    rating: Rating
   ): Promise<BeachForecast[]> {
     return points.map((point) => {
       return {
@@ -48,7 +58,7 @@ export class Forecast {
         lng: beach.lng,
         name: beach.name,
         position: beach.position,
-        rating: 1,
+        rating: rating.getRateForPoint(point),
         ...point
       };
     });
