@@ -15,6 +15,7 @@ import { ForecastController } from '@src/controllers/forecast';
 import * as database from '@src/database';
 import { UsersController } from '@src/controllers/users';
 import logger from './logger';
+import { apiErrorValidator } from './middleware/api-error-validator';
 
 export class SetupServer extends Server {
   constructor(private port = 3000) {
@@ -26,6 +27,7 @@ export class SetupServer extends Server {
     this.setupExpress();
     await this.docsSetup();
     this.setupControllers();
+    this.setupErrorHandlers();
   }
 
   public getApp(): Application {
@@ -62,6 +64,10 @@ export class SetupServer extends Server {
         origin: '*'
       })
     );
+  }
+
+  private setupErrorHandlers(): void {
+    this.app.use(apiErrorValidator);
   }
 
   private setupControllers(): void {
