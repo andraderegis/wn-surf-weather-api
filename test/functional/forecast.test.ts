@@ -48,7 +48,8 @@ describe('Beach Forecast Functional Tests', () => {
         lng: '151.289824',
         params:
           'swellDirection%2CswellHeight%2CswellPeriod%2CwaveDirection%2CwaveHeight%2CwindDirection%2CwindSpeed',
-        source: 'noaa'
+        source: 'noaa',
+        end: /(.*)/
       })
       .reply(200, stormglassWeather3HoursFixture);
 
