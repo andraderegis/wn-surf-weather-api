@@ -12,6 +12,7 @@ import { ClientRequestError } from '@src/clients/errors/client-request-error';
 import { StormGlassResponseError } from '@src/clients/errors/storm-glass-response-error';
 
 import config, { IConfig } from 'config';
+import { TimeUtil } from '@src/util/time';
 
 const stormGlassResourceConfig: IConfig = config.get(
   'App.resources.StormGlass'
@@ -32,12 +33,14 @@ export class StormGlass {
     apiSource = this.stormGlassAPISource
   ): Promise<ForecastPoint[]> {
     try {
+      const endTimeStamp = TimeUtil.getUnixTimeForAFutureDay(1);
+
       const response = await this.requestHandler.get<
         StormGlassForecastResponse
       >(
         `${stormGlassResourceConfig.get(
           'apiUrl'
-        )}/weather/point?lat=${lat}&lng=${lng}&params=${apiParams}&source=${apiSource}`,
+        )}/weather/point?lat=${lat}&lng=${lng}&params=${apiParams}&source=${apiSource}&end=${endTimeStamp}`,
         {
           headers: {
             Authorization: `${stormGlassResourceConfig.get('apiToken')}`
