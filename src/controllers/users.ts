@@ -68,6 +68,6 @@ export class UsersController extends BaseController {
       });
     }
 
-    return res.send({ name: user.name, email: user.email });
+    return res.send({ user: { name: user.name, email: user.email } });
   }
 }
